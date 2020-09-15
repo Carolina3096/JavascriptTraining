@@ -16,8 +16,9 @@
 				"skipFiles": [
 					"<node_internals>/**"
 				],
-				"program": "c:\\Users\\Carolina\\Documents\\Javascript Training WS\\Chapter1- Values, Types, and Operators\\index.js",
+				// "program": "c:\\Users\\Carolina\\Documents\\Javascript Training WS\\Modular Javascript\\modularjs.js",
 				
+				"program":"C:\\Users\\Carolina\\Documents\\Javascript Training WS\\Chapter1- Values, Types, and Operators\\index.js",
 			}
 		]
 	}
