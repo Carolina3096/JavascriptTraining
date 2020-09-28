@@ -371,35 +371,224 @@ Loop(3, n => n > 0, n => n - 1, console.log);
 // {}
 
 //Chapter 6 
-let protoRabbit = {
-  speak(line) {
-    console.log(`The ${this.type} rabbit says '${line}'`);
+// let protoRabbit = {
+//   speak(line) {
+//     console.log(`The ${this.type} rabbit says '${line}'`);
+//   }
+// };
+// let killerRabbit = Object.create(protoRabbit);
+// killerRabbit.type = "killer";
+// killerRabbit.speak("SKREEEE!");
+// // → The killer rabbit says 'SKREEEE!'
+
+// let ages = new Map();
+// ages.set("Boris", 39);
+// ages.set("Liang", 22);
+// ages.set("Júlia", 62);
+
+// console.log(`Júlia is ${ages.get("Júlia")}`);
+
+// function Vec (number1, number2){
+//   this.number1=number1;
+//   this.number2=number2;
+// }
+// Vec.prototype.plus= function(secondVec)
+// {
+//   return new Vec(this.number1+secondVec.number1, this.number2+secondVec.number2)
+// };
+// Vec.prototype.minus= function(secondVec)
+// {
+//   return new Vec(this.number1-secondVec.number1, this.number2-secondVec.number2)
+// };
+
+
+// console.log(new Vec(1, 2).plus(new Vec(2, 3)));
+
+
+
+// CHAPTER 6-Project: A Robot
+ //PART 1
+//Meadowfield
+const roads = [
+  "Alice's House-Bob's House",   "Alice's House-Cabin",
+  "Alice's House-Post Office",   "Bob's House-Town Hall",
+  "Daria's House-Ernie's House", "Daria's House-Town Hall",
+  "Ernie's House-Grete's House", "Grete's House-Farm",
+  "Grete's House-Shop",          "Marketplace-Farm",
+  "Marketplace-Post Office",     "Marketplace-Shop",
+  "Marketplace-Town Hall",       "Shop-Town Hall"
+];
+
+function buildGraph(edges) {
+  let graph = Object.create(null);
+  function addEdge(from, to) {
+    if (graph[from] == null) {
+      graph[from] = [to];
+    } else {
+      graph[from].push(to);
+    }
   }
-};
-let killerRabbit = Object.create(protoRabbit);
-killerRabbit.type = "killer";
-killerRabbit.speak("SKREEEE!");
-// → The killer rabbit says 'SKREEEE!'
-
-let ages = new Map();
-ages.set("Boris", 39);
-ages.set("Liang", 22);
-ages.set("Júlia", 62);
-
-console.log(`Júlia is ${ages.get("Júlia")}`);
-
-function Vec (number1, number2){
-  this.number1=number1;
-  this.number2=number2;
+  for (let [from, to] of edges.map(r => r.split("-"))) {
+    addEdge(from, to);
+    addEdge(to, from);
+  }
+  return graph;
 }
-Vec.prototype.plus= function(secondVec)
-{
-  return new Vec(this.number1+secondVec.number1, this.number2+secondVec.number2)
-};
-Vec.prototype.minus= function(secondVec)
-{
-  return new Vec(this.number1-secondVec.number1, this.number2-secondVec.number2)
-};
+const roadGraph = buildGraph(roads);
+//Finished PART1
+//PART 2
+//The task
+class VillageState {
+  constructor(place, parcels) {
+    this.place = place;
+    this.parcels = parcels;
+  }
+
+  move(destination) {
+    if (!roadGraph[this.place].includes(destination)) {
+      return this;
+    } else {
+      let parcels = this.parcels.map(p => {
+        if (p.place != this.place) return p;
+        return {place: destination, address: p.address};
+      }).filter(p => p.place != p.address);
+      return new VillageState(destination, parcels);
+    }
+  }
+}
+
+let first = new VillageState(
+  "Post Office",
+  [{place: "Post Office", address: "Alice's House"}]
+);
+let next = first.move("Alice's House");
+console.log(next.place);
 
 
-console.log(new Vec(1, 2).plus(new Vec(2, 3)));
+//Persistent data
+
+let object = Object.freeze({value: 5});
+object.value = 10;
+console.log(object.value);
+
+//Simulation
+function runRobot(state, robot, memory) {
+  for (let turn = 0;; turn++) {
+    if (state.parcels.length == 0) {
+      console.log(`Done in ${turn} turns`);
+      break;
+    } 
+    let action = robot(state, memory);
+    state = state.move(action.direction);
+    memory = action.memory;
+      console.log(`Moved to ${action.direction}`);
+  }
+}
+
+function randomPick(array) {
+  let choice = Math.floor(Math.random() * array.length);
+  return array[choice];
+}
+
+function randomRobot(state) {
+  return {direction: randomPick(roadGraph[state.place])};
+}
+
+VillageState.random = function(parcelCount = 5) {
+  let parcels = [];
+  for (let i = 0; i < parcelCount; i++) {
+    let address = randomPick(Object.keys(roadGraph));
+    let place;
+    do {
+      place = randomPick(Object.keys(roadGraph));
+    } while (place == address);
+    parcels.push({place, address});
+  }
+  return new VillageState("Post Office", parcels);
+};
+//runRobot(VillageState.random(), randomRobot);
+//console.log(randomPick([1,2,4.10,200]));
+//console.log(Math.random(3));
+
+const mailRoute = [
+  "Alice's House", "Cabin", "Alice's House", "Bob's House",
+  "Town Hall", "Daria's House", "Ernie's House",
+  "Grete's House", "Shop", "Grete's House", "Farm",
+  "Marketplace", "Post Office"
+];
+function routeRobot(state, memory) {
+  if (memory.length == 0) {
+    memory = mailRoute;
+  }
+  return {direction: memory[0], memory: memory.slice(1)};
+}
+
+//runRobot(VillageState.random(), routeRobot, []);
+
+// Exercises
+// Measuring a robot
+function findRoute(graph, from, to) {
+  let work = [{at: from, route: []}];
+  for (let i = 0; i < work.length; i++) {
+    let {at, route} = work[i];
+    for (let place of graph[at]) {
+      if (place == to) return route.concat(place);
+      if (!work.some(w => w.at == place)) {
+        work.push({at: place, route: route.concat(place)});
+      }
+    }
+  }
+}
+
+function goalOrientedRobot({place, parcels}, route) {
+  if (route.length == 0) {
+    let parcel = parcels[0];
+    if (parcel.place != place) {
+      route = findRoute(roadGraph, place, parcel.place);
+    } else {
+      route = findRoute(roadGraph, place, parcel.address);
+    }
+  }
+  return {direction: route[0], memory: route.slice(1)};
+}
+
+
+//EXECISES 
+//1. COMPARE ROBOTS 
+// Note: I am not sure about the average number of steps if it is well calculated. 
+//The hint says :  When it has generated enough measurements, it can use console.log to output the average for each robot, which is the total number of steps taken divided by the number of measurements.
+
+function runRobotForSteps(state, robot, memory) {
+  for (let turn = 0;; turn++) {
+    if (state.parcels.length == 0) {
+      return turn;
+      break;
+    } 
+    let action = robot(state, memory);
+    state = state.move(action.direction);
+    memory = action.memory;
+      // console.log(`Moved to ${action.direction}`);
+  }
+}
+
+function compareRobots(robot1, memory1, robot2, memory2) {
+ 
+var numberOfTasks=100;
+
+var noOfStepsRobot1;
+var noOfStepsRobot2;
+ for(i=1; i<=numberOfTasks; i++)
+ {
+ noOfStepsRobot1= runRobotForSteps(VillageState.random(), robot1, memory1);
+ noOfStepsRobot2=runRobotForSteps(VillageState.random(), robot2, memory2);
+
+ console.log(`The average number of steps for Robot1 is: ${noOfStepsRobot1/i}`);
+ console.log(`The average number of steps for Robot2 is: ${noOfStepsRobot2/i}`);
+ console.log("\n");
+ }
+
+   
+}
+  
+
+compareRobots(routeRobot, [], goalOrientedRobot, []);
