@@ -551,8 +551,19 @@ function goalOrientedRobot({place, parcels}, route) {
   }
   return {direction: route[0], memory: route.slice(1)};
 }
-
-
+function runRobotAnimation(state, robot, memory) {
+  for (let turn = 0;; turn++) {
+    if (state.parcels.length == 0) {
+      console.log(`Done in ${turn} turns`);
+      break;
+    } 
+    let action = robot(state, memory);
+    state = state.move(action.direction);
+    memory = action.memory;
+      console.log(`Moved to ${action.direction}`);
+  }
+}
+//runRobotAnimation(VillageState.random(), goalOrientedRobot, []);
 //EXECISES 
 //1. COMPARE ROBOTS 
 // Note: I am not sure about the average number of steps if it is well calculated. 
@@ -591,4 +602,80 @@ var noOfStepsRobot2;
 }
   
 
-compareRobots(routeRobot, [], goalOrientedRobot, []);
+//compareRobots(routeRobot, [], goalOrientedRobot, []);
+
+
+//Exercise 2 
+//Can you write a robot that finishes the delivery task faster than goalOrientedRobot? If you observe that robot’s behavior, what obviously stupid things does it do? How could those be improved?
+
+// If you solved the previous exercise, you might want to use your compareRobots function to verify whether you improved the robot.
+function findRoute(graph, from, to) {
+  let work = [{at: from, route: []}];
+  for (let i = 0; i < work.length; i++) {
+    let {at, route} = work[i];
+    for (let place of graph[at]) {
+      if (place == to) return route.concat(place);
+      if (!work.some(w => w.at == place)) {
+        work.push({at: place, route: route.concat(place)});
+      }
+    }
+  }
+}
+function findShortestRoute(graph, from, to) 
+{
+  let work = [{at: from, route: []}];
+  for (let i = 0; i < work.length; i++) {
+    let {at, route} = work[i];
+    for (let place of graph[at]) {
+      if (place ==to) return route.concat(place);
+      if (!work.some(w => w.at == place)) {
+        work.push({at: place, route: route.concat(place)});
+      }
+    }
+  }
+}
+
+function goalOrientedImprovedRobot({place, parcels}, route) {
+  if (route.length == 0) {
+    //let parcel = parcels[0];
+
+ var routesForAllParcels=[];
+
+   for(i=0; i<parcels.length; i++)
+   {
+    var  routeFound=[];
+    var parcel=parcels[i];
+    
+       if (parcel.place!= place) {
+
+       routeFound = findShortestRoute(roadGraph, place, parcel.place);
+
+       routesForAllParcels.push(routeFound);
+
+    }  else {  
+       var routeFoundByAddress = findRoute(roadGraph, place, parcel.address); 
+
+      routesForAllParcels.push(routeFoundByAddress);
+     }  
+
+    }
+      
+  } 
+  
+  return {direction: route[0], memory: route.slice(1)};
+}
+
+function runRobotAnimationRobotEfficiency(state, robot, memory) {
+  for (let turn = 0;; turn++) {
+    if (state.parcels.length == 0) {
+      console.log(`Done in ${turn} turns`);
+      break;
+    } 
+    let action = robot(state, memory);
+    state = state.move(action.direction);
+    memory = action.memory;
+      console.log(`Moved to ${action.direction}`);
+  }
+}
+
+runRobotAnimationRobotEfficiency(VillageState.random(), goalOrientedImprovedRobot, []);
