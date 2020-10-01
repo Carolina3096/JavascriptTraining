@@ -681,3 +681,6 @@ function runRobotAnimationRobotEfficiency(state, robot, memory) {
 runRobotAnimationRobotEfficiency(VillageState.random(), goalOrientedImprovedRobot, []);
 
 //exercise 3
+
+//Chapter 8
+///fvffvfdvfvfdv
