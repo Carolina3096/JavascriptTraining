@@ -697,28 +697,333 @@ class PGroup
   constructor(memberValues)
   {
 
-    this.memberValues= memberValues
+    this.memberValues= memberValues;
   }
 
   add(member)
-  {
-    return this.memberValues.concat(member);
+  {   
+   // return this.memberValues.concat(member);
+   return new PGroup(this.memberValues.concat(member));
   }
-  // delete()
-  // {
-
-  // }
+  delete(member)
+  {
+    return new PGroup(this.memberValues.filter(function(value){ return value!=member}));
+  }
   has(element)
   {
     return this.memberValues.includes(element);
   }
 }
-var emptyArray=[];
-PGroup.empty=new PGroup(emptyArray);
-var a= PGroup.empty.add("a");
-console.log(a.includes("a"));
+PGroup.empty=new PGroup([]);
 
-console.log(a.has("a"));
+//var a= PGroup.empty.add("a");
+//var ab=a.add("b");
+//var b = ab.delete("a");
+
+//console.log(a.has("a"));
+//console.log(b.has("a"));
+
+// Chapter 8
+// Bugs and Errors
 
 
+//Strict mode
+function canYouSpotTheProblem() {
+  // "use strict";
+  for (counter = 0; counter < 10; counter++) {
+    console.log("Happy happy");
+  }
+}
 
+canYouSpotTheProblem();
+
+
+// function Person(name) { this.name = name; }
+// let ferdinand = Person("Ferdinand"); // oops
+// console.log(name);
+
+"use strict";
+function StrictPerson(name) { this.name = name; }
+var strictFerdinand = StrictPerson("Ferdinand");
+console.log(name);
+
+function test(label, body) {
+  if (!body()) console.log(`Failed: ${label}`);
+  else 
+  console.log("Is working");
+}
+
+test("convert Latin text to uppercase", () => {
+  return "hello".toUpperCase() == "HELLO";
+});
+test("convert Greek text to uppercase", () => {
+  return "Χαίρετε".toUpperCase() == "ΧΑΊΡΕΤΕ";
+});
+test("don't convert case-less characters", () => {
+  return "مرحبا".toUpperCase() == "مرحبا";
+});
+
+
+function numberToString(n, base = 10) {
+  let result = "", sign = "";
+  if (n < 0) {
+    sign = "-";
+    n = -n;
+  }
+  do {
+    result = String(n % base) + result;
+    n /= base;
+  } while (n > 0);
+  return sign + result;
+}
+console.log(numberToString(13, 10));
+
+console.log(numberToString(13, 10));
+// → 1.5e-3231.3e-3221.3e-3211.3e-3201.3e-3191.3e-3181.3…
+
+function promptNumber(question) {
+  let result = Number("oranges");
+  if (Number.isNaN(result)) return null;
+  else return result;
+}
+
+console.log(promptNumber("How many trees do you see?"));
+
+//Exceptions
+function promptDirection(question) {
+  let result = "M";
+  if (result.toLowerCase() == "left") return "L";
+  if (result.toLowerCase() == "right") return "R";
+  throw new Error("Invalid direction: " + result);
+}
+
+function look() {
+  if (promptDirection("Which way?") == "L") {
+    return "a house";
+  } else {
+    return "two angry bears";
+  }
+}
+
+try {
+  console.log("You see", look());
+} catch (error) {
+  console.log("Something went wrong: " + error);
+}
+//Cleaning up after exceptions
+
+const accounts = {
+  a: 100,
+  b: 0,
+  c: 20
+};
+
+function getAccount() {
+  let accountName = "Carolina";
+  if (!accounts.hasOwnProperty(accountName)) {
+    throw new Error(`No such account: ${accountName}`);
+  }
+  return accountName;
+}
+
+function transfer(from, amount) {
+  if (accounts[from] < amount) return;
+  accounts[from] -= amount;
+  accounts[getAccount()] += amount;
+}
+
+ //transfer("c", 10);
+ //error thrown :Uncaught Error: No such account: Carolina
+
+ //-------
+
+ function transfer(from, amount) {
+  if (accounts[from] < amount) return;
+  let progress = 0;
+  try {
+    accounts[from] -= amount;
+    progress = 1;
+    accounts[getAccount()] += amount;
+    progress = 2;
+  } finally {
+    if (progress == 1) {
+      accounts[from] += amount;
+      console.log(accounts[from]);
+    }
+  }
+}
+//transfer("a", 40);
+
+// Selective catching
+
+// Assertions
+function firstElement(array) {
+  if (array.length == 0) {
+    throw new Error("firstElement called with []");
+  }
+  return array[0];
+}
+//firstElement([]);
+
+// Exercises
+// 1. Retry
+// Say you have a function primitiveMultiply that in 20 percent of cases multiplies two numbers and in the other 80 percent of cases raises an exception of type MultiplicatorUnitFailure. Write a function that wraps this clunky function and just keeps trying until a call succeeds, after which it returns the result.
+
+// Make sure you handle only the exceptions you are trying to handle.
+
+class MultiplicatorUnitFailure extends Error {}
+
+function primitiveMultiply(a, b) {
+  if (Math.random() < 0.2) {
+    return a * b;
+  } else {
+    throw new MultiplicatorUnitFailure("Klunk");
+  }
+}
+
+function reliableMultiply(a, b) {
+  for(;;)
+  {
+  try{
+
+       var result=primitiveMultiply(a, b);
+       return result;
+       
+     }
+
+catch(error){
+  if (error instanceof MultiplicatorUnitFailure){
+
+    console.log(error+"Try again.");
+  
+  }
+  else {
+    throw error;
+  }
+ }
+}
+}
+
+//console.log(reliableMultiply(8, 8));
+
+// Exercise 2. The locked box
+
+const box = {
+  locked: true,
+  unlock() { this.locked = false; },
+  lock() { this.locked = true;  },
+  _content: [],
+  get content() {
+    if (this.locked) throw new Error("Locked!");
+    return this._content;
+  }
+};
+
+function withBoxUnlocked(body) {
+  // Your code here.
+var boxLocked=box.locked;
+  try {
+    
+    box.unlock();
+    body();
+  }
+  finally{
+    box.lock();
+  }
+
+  }
+
+
+// withBoxUnlocked(function() {
+//   box.content.push("gold piece");
+// });
+
+try {
+  withBoxUnlocked(function() {
+    throw new Error("Pirates on the horizon! Abort!");
+  });
+} catch (e) {
+  console.log("Error raised: " + e);
+}
+
+console.log(box.locked);
+// → true
+
+// Chapter 9
+// Regular Expressions
+
+let re1 = new RegExp("abc");
+
+let eighteenPlus = /eighteen\+/;
+let re2 = /abc/;
+
+console.log(/abc/.test("abcde"));
+// → true
+console.log(/abc/.test("abxde"));
+// → false]
+
+console.log(/[0123456789]/.test("in 1992"));
+
+let dateTime = /\d\d-\d\d-\d\d\d\d \d\d:\d\d/;
+console.log(dateTime.test("01-30-2003 15:20"));
+// → true
+console.log(dateTime.test("30-jan-2003 15:20"));
+// → false
+
+
+// console.log(notBinary.test("1100100010100110"));
+// // → false
+// console.log(notBinary.test("1100100010200110"));
+// // → true
+
+//Repeating parts of a pattern
+
+
+let quotedText = /'([^']*)'/;
+console.log(quotedText.exec("she said 'hello' and then 'bye'"));
+
+console.log(new Date());
+
+console.log(new Date(2009, 12, 9));
+
+function getDate(string) {
+  let [_, month, day, year] =
+    /(\d{1,2})-(\d{1,2})-(\d{4})/.exec(string);
+  return new Date(year, month - 1, day);
+}
+console.log(getDate("1-30-2003"));
+console.log(getDate("the date is: 1-25-2012"));
+
+
+//The replace method
+
+let s = "the cia and fbi";
+console.log(s.replace(/\b(fbi|cia)\b/g,
+            str => str.toUpperCase()));
+
+
+            let stock = "1 lemon, 2 cabbages, and 101 eggs";
+function minusOne(match, amount, unit) {
+  amount = Number(amount) - 1;
+  if (amount == 1) { // only one left, remove the 's'
+    unit = unit.slice(0, unit.length - 1);
+  } else if (amount == 0) {
+    amount = "no";
+  }
+  return amount + " " + unit;
+}
+console.log(stock.replace(/(\d+) (\w+)/g, minusOne));
+
+
+let pattern = /y/g;
+pattern.lastIndex = 3;
+let match = pattern.exec("xyzzy");
+console.log(match.index);
+// → 4
+console.log(pattern.lastIndex);
+
+let sticky = /abc/y;
+sticky.lastIndex=4;
+let matchsticky=sticky.exec("xyz abc");
+console.log(matchsticky.lastIndex);
+console.log(sticky.exec("xyz abc"));
