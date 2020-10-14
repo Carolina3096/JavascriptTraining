@@ -1027,3 +1027,5 @@ sticky.lastIndex=4;
 let matchsticky=sticky.exec("xyz abc");
 console.log(matchsticky.lastIndex);
 console.log(sticky.exec("xyz abc"));
+
+//gbvdfs
