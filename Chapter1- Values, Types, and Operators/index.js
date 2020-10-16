@@ -1029,3 +1029,60 @@ console.log(matchsticky.lastIndex);
 console.log(sticky.exec("xyz abc"));
 
 //gbvdfs
+
+//Exercises 
+// 1. Regexp golf
+
+
+// car and cat
+
+var regex1=/ca+[r|t]/;
+
+
+
+// pop and prop
+var regex2=/p?op/;
+
+verify(regex2,
+  ["pop culture", "mad props"],
+  ["plop", "prrrop"]);
+
+// ferret, ferry, and ferrari
+var regex3=/ferret|ferry|ferrari/;
+verify(regex3,
+  ["ferret", "ferry", "ferrari"],
+  ["ferrum", "transfer A"]);
+// Any word ending in ious
+var regex4=/\w*ious\b/;
+
+verify(regex4,
+  ["how delicious", "spacious room"],
+  ["ruinous", "consciousness"]);
+
+
+// A whitespace character followed by a period, comma, colon, or semicolon
+
+// A word longer than six letters
+
+var regex6=/(\w){7,}/;
+verify(/.../,
+  ["Siebentausenddreihundertzweiundzwanzig"],
+  ["no", "three small words"]);
+
+// A word without the letter e (or E)
+var regex7=/\b[^e|^E]+\b/g;
+
+verify(/.../,
+  ["red platypus", "wobbling nest"],
+  ["earth bed", "learning ape", "BEET"]);
+
+function verify(regexp, yes, no) {
+  // Ignore unfinished exercises
+  if (regexp.source == "...") return;
+  for (let str of yes) if (!regexp.test(str)) {
+    console.log(`Failure to match '${str}'`);
+  }
+  for (let str of no) if (regexp.test(str)) {
+    console.log(`Unexpected match for '${str}'`);
+  }
+}
