@@ -1086,3 +1086,27 @@ function verify(regexp, yes, no) {
     console.log(`Unexpected match for '${str}'`);
   }
 }
+
+const reg1=/^'|((\W)')|('(\W))/g;
+
+const text =  "'I'm the cook,' he said, 'it's my job.'";
+// console.log(text.replace(reg1,'$1"'));
+console.log(text.replace(reg1, function(x){
+  if(x=="'")
+  {
+    return x="\"";
+  }if(x==",'")
+  {
+   return  x=",\"";
+  }
+  if(x==" '")
+  {
+   return x=" \"";
+  }
+  if(x==".'")
+  {
+    return x=".\"";
+  }
+
+}));
+
