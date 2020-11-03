@@ -904,7 +904,7 @@ catch(error){
 }
 }
 
-//console.log(reliableMultiply(8, 8));
+console.log(reliableMultiply(8, 8));
 
 // Exercise 2. The locked box
 
@@ -1114,59 +1114,272 @@ console.log(text.replace(reg1, function(x){
 //2 contribution
 
 // Improvised modules
-const weekDay = function() {
-  const names = ["Sunday", "Monday", "Tuesday", "Wednesday",
-                 "Thursday", "Friday", "Saturday"];
-  return {
-    name(number) { return names[number]; },
-    number(name) { return names.indexOf(name); }
-  };
-}();
+// const weekDay = function() {
+//   const names = ["Sunday", "Monday", "Tuesday", "Wednesday",
+//                  "Thursday", "Friday", "Saturday"];
+//   return {
+//     name(number) { return names[number]; },
+//     number(name) { return names.indexOf(name); }
+//   };
+// }();
 
-console.log(weekDay.name(weekDay.number("Sunday")));
-// → Sunday
+// console.log(weekDay.name(weekDay.number("Sunday")));
+// // → Sunday
 
-// Evaluating data as code
+// // Evaluating data as code
 
-const x = 1;
-function evalAndReturnX(code) {
-  eval(code);
-  return x;
-}
-
-console.log(evalAndReturnX("var x = 2"));
-// → 2
-console.log(x);
-// → 1
-
-let plusOne = Function("n", "return n + 1;");
-//here is creating an anonymous ufnction where n is the paramater and n+1 what is return 
-console.log(plusOne(4));
-// → 5
-
-//COMMONJs
-require.cache = Object.create(null);
-
-// function require(name) {
-//   if (!(name in require.cache)) {
-//     let code = readFile(name);
-//     let module = {exports: {}};
-//     require.cache[name] = module;
-//     let wrapper = Function("require, exports, module", code);
-//     wrapper(require, module.exports, module);
-//   }
-//   return require.cache[name].exports;
+// const x = 1;
+// function evalAndReturnX(code) {
+//   eval(code);
+//   return x;
 // }
 
-// → Friday the 13th
+// console.log(evalAndReturnX("var x = 2"));
+// // → 2
+// console.log(x);
+// // → 1
+
+// let plusOne = Function("n", "return n + 1;");
+// //here is creating an anonymous ufnction where n is the paramater and n+1 what is return 
+// console.log(plusOne(4));
+// // → 5
+
+// //COMMONJs
+// require.cache = Object.create(null);
+
+// // function require(name) {
+// //   if (!(name in require.cache)) {
+// //     let code = readFile(name);
+// //     let module = {exports: {}};
+// //     require.cache[name] = module;
+// //     let wrapper = Function("require, exports, module", code);
+// //     wrapper(require, module.exports, module);
+// //   }
+// //   return require.cache[name].exports;
+// // }
+
+// // → Friday the 13th
 
 
-const {find_path} = require("dijkstrajs");
+// const {find_path} = require("dijkstrajs");
 
-//Exercises 
-// Roads module
+// //Exercises 
+// // Roads module
 
-//import graph module
-const {buildGraph}= require("./graph");
-//exports the road graph
-exports.roadGraph=buildGraph(roads.map(r => r.split("-")));
+// //import graph module
+// const {buildGraph}= require("./graph");
+// //exports the road graph
+// exports.roadGraph=buildGraph(roads.map(r => r.split("-")));
+
+
+// Chapter 11
+// Asynchronous Programming
+
+// Callbacks
+
+// setTimeout(() => console.log("Tick"), 3000);
+
+// Promises
+
+// let fifteen = Promise.resolve(15);
+// fifteen.then(value => console.log(`Got ${value}`));
+// → Got 15
+
+// new Promise((_, reject) => reject(new Error("Fail")))
+//   .then(value => console.log("Handler 1"))
+//   .catch(reason => {
+//     console.log("Caught failure " + reason);
+//     return "nothing";
+//   })
+//   .then(value => console.log("Handler 2", value));
+// → Caught failure Error: Fail
+// → Handler 2 nothing
+
+class Timeout extends Error {}
+
+function request(nest, target, type, content) {
+  return new Promise((resolve, reject) => {
+    let done = false;
+    function attempt(n) {
+      nest.send(target, type, content, (failed, value) => {
+        done = true;
+        if (failed) reject(failed);
+        else resolve(value);
+      });
+      setTimeout(() => {
+        if (done) return;
+        else if (n < 3) attempt(n + 1);
+        else reject(new Timeout("Timed out"));
+      }, 250);
+    }
+    attempt(1);
+  });
+}
+
+function* powers(n) {
+  for (let current = n;; current *= n) {
+    yield current;
+  }
+}
+
+for (let power of powers(3)) {
+  if (power > 50) break;
+  console.log(power);
+}
+// → 3
+// → 9
+// → 27
+
+// Group.prototype[Symbol.iterator] = function*() {
+//   for (let i = 0; i < this.members.length; i++) {
+//     yield this.members[i];
+//   }
+// };
+
+
+//WEB Dev Simplified 
+//PROMISES
+var p=new Promise((resolve, reject)=>{
+
+  let a =1+1;
+  if(a==2)
+  {
+    resolve('Success')
+  }
+  else
+  {
+    reject('Failed')
+  }
+ 
+})
+
+p.then((message)=> {
+  console.log('This si the Then'+ message)
+}).catch((message)=>{
+  console.log('This is in the Catch '+ message)
+})
+
+
+const userLeft=false;
+const userWatchingCatMeme=true;
+function watchTutorialPromise(callback, errorCallback)
+{
+  return new Promise((resolve, reject)=>{
+    if(userLeft)
+    {
+      reject({
+        name: 'User Left',
+        message: ':('
+      })
+    }
+    else if (userWatchingCatMeme)
+    {
+      reject({
+        name:'User watching cat Meme',
+        message: 'WebDevSimplified<Cat'
+      })
+
+
+    }
+    else {
+      resolve('Thumbs up and Subscribe')
+    }
+  })
+  
+}
+
+watchTutorialPromise().then((message)=>{
+  console.log('Success: '+ message)
+}).catch((error) =>{
+console.log(error.name + '' + error.message)
+})
+
+// Video recording. Run in parallel at the same time. Not waiting for one to start another
+const recordVideoOne = new Promise((resolve, reject) => {
+  resolve('Video 1 Recorded')
+})
+
+const recordVideoTwo = new Promise((resolve, reject) => {
+  resolve('Video 2 Recorded')
+})
+
+const recordVideoThree = new Promise((resolve, reject) => {
+  resolve('Video 3 Recorded')
+})
+Promise.all([recordVideoOne, recordVideoTwo, recordVideoThree]).then((messages)=>{
+  console.log(messages);
+});
+
+Promise.race([recordVideoOne, recordVideoTwo, recordVideoThree]).then((message)=>{
+  console.log(message);
+});
+
+//Web Dev Simplified
+//ASYNC AWAIT 
+
+
+function  makeRequest(location)
+{
+  return new Promise((resolve, reject)=>{
+    console.log(`Making Request to ${location}`)
+   if(location==='Google')
+  {
+    resolve('Google says hi')
+  } else {
+    reject('We can only talk to Google')
+  }
+  
+  })
+}
+
+
+function processRequest(response)
+{
+  return new Promise((resolve, reject)=>{
+    console.log('Processing response')
+    resolve(`Extra Information= ${response}`)
+  })
+
+}
+
+// makeRequest('Facebook').then(response=>{
+//   console.log('response received')
+//   return processRequest(response)
+// }).then(processedResponse=>{
+//   console.log(processedResponse)
+// }).catch(err=>{
+//   console.log(err)
+// })
+
+
+//with async
+
+async function doWork()
+{
+  try{ const response= await makeRequest('facebook');
+  console.log('Response received')
+  const processedResponse= await processRequest(response)
+  console.log(processedResponse)}
+  catch(err){
+    console.log(err)
+  }
+ 
+}
+
+doWork();
+// Exercises
+// 1.Tracking the scalpel
+function anyStorage(nest, source, name) {
+  if (source == nest.name) return storage(nest, name);
+  else return routeRequest(nest, source, "storage", name);
+}
+
+async function locateScalpel(nest) {
+  // Your code here.
+  var currentNest=nest.name;
+  for(;;)
+  {
+    var newNest= await anyStorage(nest, currentNest, 'scalpel');
+    
+  }
+}
