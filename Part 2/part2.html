@@ -1,0 +1,142 @@
+<!-- <!doctype html>
+<html>
+  <head>
+    <title>Javascript training</title>
+  </head>
+  <body>
+    <h1>Javascript training</h1>
+    <p>Chapter 14
+        The Document Object Model</p>
+  
+        <h1>Mountains</h1>
+
+<div id="mountains"></div>
+
+<script>
+    const MOUNTAINS = [
+      {name: "Kilimanjaro", height: 5895, place: "Tanzania"},
+      {name: "Everest", height: 8848, place: "Nepal"},
+      {name: "Mount Fuji", height: 3776, place: "Japan"},
+      {name: "Vaalserberg", height: 323, place: "Netherlands"},
+      {name: "Denali", height: 6168, place: "United States"},
+      {name: "Popocatepetl", height: 5465, place: "Mexico"},
+      {name: "Mont Blanc", height: 4808, place: "Italy/France"}
+    ];
+  
+    // Your code here
+
+
+function buildMountainTable(MOUNTAINS)
+{
+  var table=document.createElement('table');
+  var headers=Object.keys(MOUNTAINS[0]);
+  var headerRow= document.createElement('tr');
+
+  headers.forEach(headervalue=>{
+
+     var header= document.createElement('th');
+     var textNodes= document.createTextNode(headervalue);
+     header.appendChild(textNodes);
+     headerRow.appendChild(header)
+
+});
+
+table.appendChild(headerRow)
+
+MOUNTAINS.forEach(mountainObj=> {
+
+  var row= document.createElement('tr');
+
+  Object.values(mountainObj).forEach(val =>
+  {
+    var cell=document.createElement('td');
+    var txtNode=document.createTextNode(val);
+    cell.appendChild(txtNode);
+    row.appendChild(cell);
+  })
+
+  table.appendChild(row);
+
+})
+
+return table;
+}
+
+let parent= document.getElementById("mountains");
+parent.appendChild(buildMountainTable(MOUNTAINS)) 
+  </script>
+  </body>
+</html> -->
+
+<!-- // Excercise 2   Elements by tag name -->
+<!-- <!doctype html>
+<html>
+  <head>
+
+  </head>
+  <body>
+
+    <h1>Heading with a <span>span</span> element.</h1>
+    <p>A paragraph with <span>one</span>, <span>two</span>
+      spans.</p>
+  </body>
+ 
+<script>
+
+    function byTagName(node, tagName) {
+    // Your code here.
+    var childsOfElement=[]
+    function SearchForChild(node)
+    {
+     for(var child of node.childNodes){
+      
+      if (child.nodeType == document.ELEMENT_NODE) {
+        if(child.nodeName.toLowerCase()==tagName){
+          childsOfElement.push(child)
+        }
+
+        SearchForChild(child)
+    }
+  }
+
+ 
+  }
+    SearchForChild(node);
+    return childsOfElement;
+    }
+   
+
+  
+
+  console.log(byTagName(document.body, "h1").length);
+</script>
+  </html>  -->
+<!-- 
+  Chapter 15
+Handling Events -->
+
+<p>Click this document to activate the handler.</p>
+<!-- 
+<button>Click me</button> -->
+<button>Act-once button</button>
+<script>
+  window.addEventListener("click", () => {
+    console.log("You knocked?");
+  });
+
+  // let button = document.querySelector("button");
+  // button.addEventListener("click", () => {
+  //   console.log("Button clicked.");
+  // });
+
+  let button = document.querySelector("button");
+  function once() {
+    console.log("Done.");
+    button.removeEventListener("click", once);
+  }
+  button.addEventListener("click", once);
+</script>
+
+
+
+
