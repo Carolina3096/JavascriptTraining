@@ -115,11 +115,11 @@ parent.appendChild(buildMountainTable(MOUNTAINS))
   Chapter 15
 Handling Events -->
 
-<p>Click this document to activate the handler.</p>
+<!-- <p>Click this document to activate the handler.</p> -->
 <!-- 
 <button>Click me</button> -->
-<button>Act-once button</button>
-<script>
+<!-- <button>Act-once button</button> -->
+<!-- <script>
   window.addEventListener("click", () => {
     console.log("You knocked?");
   });
@@ -135,8 +135,226 @@ Handling Events -->
     button.removeEventListener("click", once);
   }
   button.addEventListener("click", once);
+</script> -->
+
+
+<!-- <script>
+  let button = document.querySelector("button");
+  function once() {
+    console.log("Done.");
+    button.removeEventListener("click", once);
+  }
+  button.addEventListener("click", once);
+</script> -->
+
+<!-- <button>Click me any way you want</button>
+<script>
+  let button = document.querySelector("button");
+  button.addEventListener("mousedown", event => {
+    if (event.button == 0) {
+      console.log("Left button");
+    } else if (event.button == 1) {
+      console.log("Middle button");
+    } else if (event.button == 2) {
+      console.log("Right button");
+    }
+  });
+</script> -->
+<!-- 
+<p>A paragraph with a <button>button</button>.</p>
+<script>
+  let para = document.querySelector("p");
+  let button = document.querySelector("button");
+  para.addEventListener("mousedown", () => {
+    console.log("Handler for paragraph.");
+  });
+  button.addEventListener("mousedown", event => {
+    console.log("Handler for button.");
+    if (event.button == 2) event.stopPropagation();
+  });
+</script> -->
+
+<!-- <button>A</button>
+<button>B</button>
+<button>C</button>
+<script>
+  document.body.addEventListener("click", event => {
+    if (event.target.nodeName == "BUTTON") {
+      console.log("Clicked", event.target.textContent);
+    }
+  });
+</script> -->
+<!-- 
+<a href="https://developer.mozilla.org/">MDN</a>
+<script>
+  let link = document.querySelector("a");
+  link.addEventListener("click", event => {
+    console.log("Nope.");
+    event.preventDefault();
+  });
+</script> -->
+
+<!-- <p>This page turns violet when you hold the V key.</p>
+<script>
+  window.addEventListener("keydown", event => {
+    if (event.key == "v") {
+      document.body.style.background = "violet";
+    }
+  });
+  window.addEventListener("keyup", event => {
+    if (event.key == "v") {
+      document.body.style.background = "";
+    }
+  });
+</script> -->
+
+<!-- <p>Press Control-Space to continue.</p>
+<script>
+  window.addEventListener("keydown", event => {
+    if (event.key == " " && event.ctrlKey) {
+      console.log("Continuing!");
+    }
+  });
+</script> -->
+
+<!-- 
+Mouse clicks -->
+
+<!-- <style>
+  body {
+    height: 200px;
+    background: beige;
+  }
+  .dot {
+    height: 8px; width: 8px;
+    border-radius: 4px; /* rounds corners */
+    background: blue;
+    position: absolute;
+  }
+</style>
+<script>
+  window.addEventListener("click", event => {
+    let dot = document.createElement("div");
+    dot.className = "dot";
+    dot.style.left = (event.pageX - 4) + "px";
+    dot.style.top = (event.pageY - 4) + "px";
+    document.body.appendChild(dot);
+  });
+</script> -->
+
+
+<!-- //Mouse Motion  -->
+<!-- <p>Drag the bar to change its width:</p>
+<div style="background: orange; width: 60px; height: 20px">
+</div>
+<script>
+  let lastX; // Tracks the last observed mouse X position
+  let bar = document.querySelector("div");
+  bar.addEventListener("mousedown", event => {
+    if (event.button == 0) {
+      lastX = event.clientX;
+      window.addEventListener("mousemove", moved);
+      event.preventDefault(); // Prevent selection
+    }
+  });
+
+  function moved(event) {
+    if (event.buttons == 0) {
+      window.removeEventListener("mousemove", moved);
+    } else {
+      let dist = event.clientX - lastX;
+      let newWidth = Math.max(10, bar.offsetWidth + dist);
+      bar.style.width = newWidth + "px";
+      lastX = event.clientX;
+    }
+  }
+</script> -->
+<!-- 
+<style>
+  dot { position: absolute; display: block;
+        border: 2px solid red; border-radius: 50px;
+        height: 100px; width: 100px; }
+</style>
+<p>Touch this page</p>
+<script>
+  function update(event) {
+    for (let dot; dot = document.querySelector("dot");) {
+      dot.remove();
+    }
+    for (let i = 0; i < event.touches.length; i++) {
+      let {pageX, pageY} = event.touches[i];
+      let dot = document.createElement("dot");
+      dot.style.left = (pageX - 50) + "px";
+      dot.style.top = (pageY - 50) + "px";
+      document.body.appendChild(dot);
+    }
+  }
+  window.addEventListener("touchstart", update);
+  window.addEventListener("touchmove", update);
+  window.addEventListener("touchend", update);
+</script> -->
+
+<!-- 
+Scroll events -->
+
+<!-- <style>
+  #progress {
+    border-bottom: 2px solid blue;
+    width: 0;
+    position: fixed;
+    top: 0; left: 0;
+  }
+</style>
+<div id="progress"></div>
+<script>
+  // Create some content
+  document.body.appendChild(document.createTextNode(
+    "supercalifragilisticexpialidocious ".repeat(1000)));
+
+  let bar = document.querySelector("#progress");
+  window.addEventListener("scroll", () => {
+    let max = document.body.scrollHeight - innerHeight;
+    bar.style.width = `${(pageYOffset / max) * 100}%`;
+  });
+</script> -->
+
+<!-- <p>Age: <input type="text" data-help="Your age in years"></p>
+<p id="help"></p>
+
+<script>
+  let help = document.querySelector("#help");
+  let fields = document.querySelectorAll("input");
+  for (let field of Array.from(fields)) {
+    field.addEventListener("focus", event => {
+      let text = event.target.getAttribute("data-help");
+      help.textContent = text;
+    });
+    field.addEventListener("blur", event => {
+      help.textContent = "";
+    });
+  }
+</script> -->
+
+<!-- Excercise -->
+<!-- 1. Balloon -->
+<p>🎈</p>
+<style>
+ p{
+font-size:10px;
+  }
+</style>
+<script>
+  // Your code here
+  let ballon = document.querySelector("p");
+  let ballonsize = window.getComputedStyle(ballon).fontSize;
+  window.addEventListener("keydown", event => {
+    if (event.key == 'ArrowUp') {
+  
+      ballon.style.fontSize=(ballonsize+40) +"px";
+    }else 
+    if(event.key=='ArrowDown')
+    {
+
+    }
+  })
 </script>
-
-
-
-
