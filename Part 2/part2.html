@@ -346,15 +346,31 @@ font-size:10px;
 <script>
   // Your code here
   let ballon = document.querySelector("p");
-  let ballonsize = window.getComputedStyle(ballon).fontSize;
+
+ 
   window.addEventListener("keydown", event => {
     if (event.key == 'ArrowUp') {
-  
-      ballon.style.fontSize=(ballonsize+40) +"px";
+      let ballonsize = window.getComputedStyle(ballon).fontSize;
+      let onlyNumbers = /\d+/
+      let onlyballoSize=onlyNumbers.exec(ballonsize);
+      ballon.style.fontSize=(+onlyballoSize+ +40) +"px";
+   
     }else 
     if(event.key=='ArrowDown')
     {
 
     }
+    let newBallonSize=GetTheSizeOfBallon(ballon.style.fontSize);
+    if(newBallonSize>=100)
+    {
+    ballon.textContent="💥";
+    }
   })
+
+  function GetTheSizeOfBallon(ballonWithPixels)
+  {
+    let onlyNumbers = /\d+/
+    let onlyballonSize=onlyNumbers.exec(ballonWithPixels);
+    return onlyballonSize
+  }
 </script>
