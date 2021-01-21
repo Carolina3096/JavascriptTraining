@@ -269,8 +269,8 @@ Mouse clicks -->
     }
   }
 </script> -->
-<!-- 
-<style>
+
+<!-- <style>
   dot { position: absolute; display: block;
         border: 2px solid red; border-radius: 50px;
         height: 100px; width: 100px; }
@@ -292,7 +292,7 @@ Mouse clicks -->
   window.addEventListener("touchstart", update);
   window.addEventListener("touchmove", update);
   window.addEventListener("touchend", update);
-</script> -->
+</script>  -->
 
 <!-- 
 Scroll events -->
@@ -337,7 +337,7 @@ Scroll events -->
 
 <!-- Excercise -->
 <!-- 1. Balloon -->
-<p>🎈</p>
+<!-- <p>🎈</p>
 <style>
  p{
 font-size:10px;
@@ -373,4 +373,46 @@ font-size:10px;
     let onlyballonSize=onlyNumbers.exec(ballonWithPixels);
     return onlyballonSize
   }
-</script>
+</script> -->
+
+<!-- 1. Mouse Trail -->
+<style>
+
+.trail { /* className for the trail elements */
+  position: absolute;
+  height: 6px; width: 6px;
+  border-radius: 3px;
+  background: teal;
+}
+body {
+  height: 300px;
+}
+</style>
+
+<script>
+// Your code here.
+// var trailArray=[];
+// for(let i= 0; i<=5;i++)
+//   {
+//     let dot=document.createElement("div");
+//     dot.className="trail";
+//     document.body.appendChild(dot);
+//     // trailArray.push(dot);
+//   }
+//   var currElement=0;
+// window.addEventListener('mousemove', moved);
+
+// function moved()
+// { 
+ 
+//   let dot= trailArray[currElement];
+//   dot.style.left = (event.pageX - 4) + "px";
+//   dot.style.top = (event.pageY - 4) + "px";
+//   currElement=currElement++;
+//   currElement=currElement%trailArray.length;
+// }
+// </script>
+
+
+<!-- Chapter 16
+Project: A Platform Game -->
